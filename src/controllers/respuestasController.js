@@ -6,8 +6,8 @@ const respuestasService = new RespuestasService();
 
 router.post('/', async (req, res) => {
     try {
-        const { user_id, pregunta_id, respuesta_seleccionada, es_respuesta_correcta } = req.body;
-        const respuestaCreada = await respuestasService.crearRespuesta(user_id, pregunta_id, respuesta_seleccionada, es_respuesta_correcta);
+        const { user_id, respuesta_seleccionada, es_respuesta_correcta } = req.body;
+        const respuestaCreada = await respuestasService.crearRespuesta(user_id, respuesta_seleccionada, es_respuesta_correcta);
         if (respuestaCreada) {
             res.status(200).json("Respuesta creada");   
         } else{
