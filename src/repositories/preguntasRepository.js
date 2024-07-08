@@ -8,17 +8,49 @@ export default class PreguntasRepository {
         this.DBClient.connect();   
     }
     async crearPregunta(pregunta, opcion_1, opcion_2, opcion_3, opcion_4, respuesta_correcta) {
-        const query = 'INSERT INTO Preguntas (pregunta, opcion_1, opcion_2, opcion_3, opcion_4, respuesta_correcta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *';
-        const values = [pregunta, opcion_1, opcion_2, opcion_3, opcion_4, respuesta_correcta];
+        const fecha = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+        const query = 'INSERT INTO Preguntas (pregunta, opcion_1, opcion_2, opcion_3, opcion_4, respuesta_correcta, fecha_creacion) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+        const values = [pregunta, opcion_1, opcion_2, opcion_3, opcion_4, respuesta_correcta, fecha];
         const { rows } = await this.DBClient.query(query, values);
         return rows[0];
     }
 
     async actualizarPregunta(id, pregunta, opcion_1, opcion_2, opcion_3, opcion_4, respuesta_correcta) {
-        const query = 'UPDATE Preguntas SET pregunta = $1, opcion_1 = $2, opcion_2 = $3, opcion_3 = $4, opcion_4 = $5, respuesta_correcta = $6 WHERE id = $7 RETURNING *';
-        const values = [pregunta, opcion_1, opcion_2, opcion_3, opcion_4, respuesta_correcta, id];
-        const { rows } = await this.DBClient.query(query, values);
-        return rows[0];
+    let query = 'UPDATE Preguntas SET';
+    const values = [];
+    let setClause = '';
+    if (pregunta !== undefined) {
+        setClause += ' pregunta = $' + (values.length + 1) + ',';
+        values.push(pregunta);
+    }
+    if (opcion_1 !== undefined) {
+        setClause += ' opcion_1 = $' + (values.length + 1) + ',';
+        values.push(opcion_1);
+    }
+    if (opcion_2 !== undefined) {
+        setClause += ' opcion_2 = $' + (values.length + 1) + ',';
+        values.push(opcion_2);
+    }
+    if (opcion_3 !== undefined) {
+        setClause += ' opcion_3 = $' + (values.length + 1) + ',';
+        values.push(opcion_3);
+    }
+    if (opcion_4 !== undefined) {
+        setClause += ' opcion_4 = $' + (values.length + 1) + ',';
+        values.push(opcion_4);
+    }
+    if (respuesta_correcta !== undefined) {
+        setClause += ' respuesta_correcta = $' + (values.length + 1) + ',';
+        values.push(respuesta_correcta);
+    }
+    if (setClause.endsWith(',')) {
+        setClause = setClause.slice(0, -1);
+    }
+    query += setClause + ' WHERE id = $' + (values.length + 1) + ' RETURNING *';
+    values.push(id);
+    console.log(query);
+    const { rows } = await this.DBClient.query(query, values);
+    return rows[0];
     }
 
     async eliminarPregunta(id) {
@@ -38,11 +70,11 @@ export default class PreguntasRepository {
         const values = [];
 
         if (palabra_clave) {
-            query += ' WHERE pregunta LIKE $1';
+            query += ' WHERE pregunta ILIKE $1';
             values.push(`%${palabra_clave}%`);
         }
         query += ` ORDER BY fecha_creacion`;
-
+        console.log(query)
         const { rows } = await this.DBClient.query(query, values);
         return rows;
     }
