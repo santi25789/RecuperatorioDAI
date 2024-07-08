@@ -1,4 +1,6 @@
 import express from "express";
+import preguntasController from "./controllers/preguntasController.js"
+import respuestasController from "./controllers/respuestasController.js"
 
 const app=express();
 

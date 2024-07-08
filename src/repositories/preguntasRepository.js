@@ -1,4 +1,5 @@
-import DBconfig from '../BD/BD.js';
+import { DBconfig } from '../BD/BD.js';
+import pg from "pg";
 
 export default class PreguntasRepository {
     constructor () {
