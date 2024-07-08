@@ -1,4 +1,3 @@
-// preguntasService.js
 import PreguntasRepository from '../repositories/preguntasRepository.js';
 
 const preguntasRepository = new PreguntasRepository();
