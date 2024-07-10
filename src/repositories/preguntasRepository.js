@@ -49,6 +49,7 @@ export default class PreguntasRepository {
     query += setClause + ' WHERE id = $' + (values.length + 1) + ' RETURNING *';
     values.push(id);
     console.log(query);
+    console.log(values)
     const { rows } = await this.DBClient.query(query, values);
     return rows[0];
     }
@@ -73,7 +74,7 @@ export default class PreguntasRepository {
             query += ' WHERE pregunta ILIKE $1';
             values.push(`%${palabra_clave}%`);
         }
-        query += ` ORDER BY fecha_creacion`;
+        query += ` ORDER BY preguntas.fecha_creacion`;
         console.log(query)
         const { rows } = await this.DBClient.query(query, values);
         return rows;
